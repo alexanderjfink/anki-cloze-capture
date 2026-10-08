@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+web-ext-artifacts/
+
+# Logs / OS cruft
+*.log
+.DS_Store
+
+# Environment / secrets
+.env
+.env.*
+*.local
+
+# Editor / tooling
+.idea/
+.vscode/
+*.tsbuildinfo
+
+# Temporary local verification scripts
+verify-*.ts

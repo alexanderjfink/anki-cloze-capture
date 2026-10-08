@@ -1,0 +1,21 @@
+{
+  "name": "anki-cloze-capture",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Firefox extension: highlight text, generate Anki cloze cards with an LLM, and route them to the best deck.",
+  "type": "module",
+  "scripts": {
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts --watch",
+    "package": "bun run build.ts && bunx web-ext build --source-dir=dist --overwrite-dest",
+    "lint": "bunx web-ext lint --source-dir=dist",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "@types/firefox-webext-browser": "^120.0.4",
+    "@types/node": "^26.6.4",
+    "typescript": "^5.6.3"
+  }
+}

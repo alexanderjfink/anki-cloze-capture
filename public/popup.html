@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Anki Cloze Capture</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        width: 320px; margin: 0; padding: 14px;
+        background: #1e1f24; color: #e7e7ea;
+        font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      h1 { font-size: 14px; margin: 0 0 10px; }
+      .status { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: #7a7f8a; }
+      .dot.ok { background: #58c26a; }
+      .dot.bad { background: #d46a6a; }
+      .muted { color: #9aa0ad; }
+      .row { display: flex; gap: 8px; margin-bottom: 10px; }
+      button {
+        flex: 1; background: #2c2d35; color: #e7e7ea; border: 1px solid #454754;
+        border-radius: 7px; padding: 7px 9px; cursor: pointer; font-size: 12px;
+      }
+      button:hover { background: #35363f; }
+      button.primary { background: #3b6fd4; border-color: #3b6fd4; color: #fff; }
+      h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #8f95a3; margin: 14px 0 8px; }
+      .batch { border: 1px solid #33353e; border-radius: 8px; padding: 8px 9px; margin-bottom: 7px; }
+      .batch .top { display: flex; align-items: center; gap: 6px; }
+      .batch .deck { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .batch button { flex: 0 0 auto; padding: 4px 8px; font-size: 11px; }
+      .empty { color: #7f8593; font-size: 12px; }
+      .hint { color: #7f8593; font-size: 11px; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+    <h1>Anki Cloze Capture</h1>
+    <div class="status">
+      <span class="dot" id="dot"></span>
+      <span id="status-text">Checking…</span>
+    </div>
+    <div class="row">
+      <button class="primary" id="open-options">Settings</button>
+      <button id="flush">Flush queue</button>
+    </div>
+    <div class="row">
+      <button id="power">Power: …</button>
+    </div>
+    <div class="row">
+      <button id="markers">Markers: …</button>
+    </div>
+    <div class="row">
+      <button id="import-hyp">Import Hypothes.is highlights</button>
+    </div>
+    <div class="row">
+      <button id="autogen">Autogen from page</button>
+    </div>
+    <h2>Recent additions</h2>
+    <div id="recent"></div>
+    <div class="hint">Highlight text, then press Alt+Shift+A (or right-click → Create Anki cloze card).</div>
+    <script src="popup.js"></script>
+  </body>
+</html>

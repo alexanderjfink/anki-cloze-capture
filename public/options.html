@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anki Cloze Capture — Settings</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 28px 20px 60px;
+        background: #16171b; color: #e7e7ea;
+        font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      .sub { color: #9aa0ad; font-size: 13px; margin-bottom: 22px; }
+      section { background: #1e1f24; border: 1px solid #30323b; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+      h2 { font-size: 14px; margin: 0 0 12px; letter-spacing: .02em; text-transform: uppercase; color: #aeb4c0; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+      .field.full { grid-column: 1 / -1; }
+      label { font-size: 12px; color: #9aa0ad; }
+      input, select, textarea {
+        width: 100%; background: #14151a; color: #e7e7ea; border: 1px solid #3a3c45;
+        border-radius: 7px; padding: 8px 9px; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      textarea { resize: vertical; min-height: 64px; }
+      select { font-family: inherit; }
+      .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .hint { color: #7f8593; font-size: 11px; margin-top: 4px; }
+      button {
+        background: #2c2d35; color: #e7e7ea; border: 1px solid #454754;
+        border-radius: 7px; padding: 7px 11px; cursor: pointer; font-size: 12px;
+      }
+      button:hover { background: #35363f; }
+      button.primary { background: #3b6fd4; border-color: #3b6fd4; color: #fff; }
+      button.primary:hover { background: #4a7ee0; }
+      .check { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+      .check input { width: auto; }
+      #status { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+        background: #23324a; color: #cfe1ff; border: 1px solid #3b6fd4; border-radius: 9px;
+        padding: 9px 14px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+      #status.show { opacity: 1; }
+      #status.error { background: #4a2323; color: #f2a1a1; border-color: #a13b3b; }
+      .provider { border: 1px solid #30323b; border-radius: 9px; padding: 12px; margin-bottom: 10px; }
+      .provider.active { border-color: #3b6fd4; }
+      .provider h3 { margin: 0 0 10px; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Anki Cloze Capture</h1>
+      <div class="sub">Settings are saved automatically.</div>
+
+      <section>
+        <h2>Active LLM provider</h2>
+        <div class="field full">
+          <label for="activeProvider">Provider used to generate cards</label>
+          <select id="activeProvider" data-path="activeProvider">
+            <option value="opencode-go">OpenCode Go (remote)</option>
+            <option value="ollama">Ollama (local)</option>
+            <option value="vllm">vLLM (local)</option>
+          </select>
+        </div>
+
+        <div class="provider" id="provider-opencode-go">
+          <h3>OpenCode Go</h3>
+          <div class="grid">
+            <div class="field"><label>Base URL</label><input data-path="providers.opencode-go.baseUrl" /></div>
+            <div class="field"><label>Model</label><select data-path="providers.opencode-go.model" data-models-for="opencode-go"></select></div>
+            <div class="field full"><label>API key</label><input type="password" autocomplete="new-password" data-path="providers.opencode-go.apiKey" data-loads-models="opencode-go" placeholder="paste your OpenCode Go key" /></div>
+          </div>
+          <div class="row">
+            <button data-action="test-chat" data-provider="opencode-go">Test</button>
+            <button data-action="detect-chat" data-provider="opencode-go">Load models</button>
+          </div>
+          <div class="hint" id="result-opencode-go">Enter your API key to load the model list.</div>
+        </div>
+
+        <div class="provider" id="provider-ollama">
+          <h3>Ollama</h3>
+          <div class="grid">
+            <div class="field"><label>Base URL</label><input data-path="providers.ollama.baseUrl" /></div>
+            <div class="field"><label>Model</label><select data-path="providers.ollama.model" data-models-for="ollama"></select></div>
+          </div>
+          <div class="row">
+            <button data-action="test-chat" data-provider="ollama">Test</button>
+            <button data-action="detect-chat" data-provider="ollama">Load models</button>
+          </div>
+          <div class="hint" id="result-ollama"></div>
+        </div>
+
+        <div class="provider" id="provider-vllm">
+          <h3>vLLM</h3>
+          <div class="grid">
+            <div class="field"><label>Base URL</label><input data-path="providers.vllm.baseUrl" /></div>
+            <div class="field"><label>Model</label><select data-path="providers.vllm.model" data-models-for="vllm"></select></div>
+            <div class="field full"><label>API key (if your server requires one)</label><input type="password" autocomplete="new-password" data-path="providers.vllm.apiKey" data-loads-models="vllm" placeholder="paste your vLLM/OpenAI-compatible key" /></div>
+          </div>
+          <div class="row">
+            <button data-action="test-chat" data-provider="vllm">Test</button>
+            <button data-action="detect-chat" data-provider="vllm">Load models</button>
+          </div>
+          <div class="hint" id="result-vllm"></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Provider strategy (token &amp; battery saving)</h2>
+        <div class="field full check">
+          <input type="checkbox" id="preferLocal" data-path="providerStrategy.preferLocal" data-type="boolean" />
+          <label for="preferLocal" style="font-size:13px;color:#e7e7ea">Prefer the local LLM by default to save remote tokens/cost</label>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label>Local provider for strategy</label>
+            <select data-path="providerStrategy.localProvider">
+              <option value="ollama">Ollama</option>
+              <option value="vllm">vLLM</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Power state</label>
+            <select data-path="providerStrategy.chargingOverride">
+              <option value="auto">Auto-detect (Firefox: unavailable)</option>
+              <option value="charging">On AC power</option>
+              <option value="battery">On battery</option>
+            </select>
+            <div class="hint">Firefox exposes no battery API; set this manually so "only when charging" works.</div>
+          </div>
+        </div>
+        <div class="field full check">
+          <input type="checkbox" id="localOnlyCharging" data-path="providerStrategy.localOnlyWhenCharging" data-type="boolean" />
+          <label for="localOnlyCharging" style="font-size:13px;color:#e7e7ea">Only prefer local while on AC power (saves battery)</label>
+        </div>
+        <div class="field full check">
+          <input type="checkbox" id="fallbackLocal" data-path="providerStrategy.fallbackToLocalWhenOffline" data-type="boolean" />
+          <label for="fallbackLocal" style="font-size:13px;color:#e7e7ea">Fall back to local when the remote provider is unreachable (no wifi)</label>
+        </div>
+        <div class="field"><label>Max concurrent requests</label><input type="number" min="1" max="8" data-path="providerStrategy.maxConcurrentRequests" data-type="number" /></div>
+      </section>
+
+      <section>
+        <h2>Deck routing (embeddings)</h2>
+        <div class="grid">
+          <div class="field">
+            <label>Embedding provider</label>
+            <select data-path="embeddings.kind" data-loads-models="embeddings">
+              <option value="ollama">Ollama</option>
+              <option value="vllm">vLLM</option>
+              <option value="custom">Custom OpenAI-compatible</option>
+            </select>
+          </div>
+          <div class="field"><label>Embedding model</label><select data-path="embeddings.model" data-models-for="embeddings"></select></div>
+          <div class="field full"><label>Embedding base URL</label><input data-path="embeddings.baseUrl" data-loads-models="embeddings" /></div>
+          <div class="field full"><label>Embedding API key (if your server requires one)</label><input type="password" autocomplete="new-password" data-path="embeddings.apiKey" data-loads-models="embeddings" /></div>
+          <div class="field"><label>Match threshold (0–1)</label><input type="number" min="0" max="1" step="0.01" data-path="routing.threshold" data-type="number" /></div>
+          <div class="field"><label>Fallback deck</label><input data-path="routing.fallbackDeck" list="deck-list" /></div>
+        </div>
+        <div class="field full">
+          <label>Excluded decks (one per line)</label>
+          <textarea data-path="routing.exclusions" data-type="lines"></textarea>
+          <div class="hint">"Default" is always excluded. Excluded decks are never routed to.</div>
+        </div>
+        <div class="field full">
+          <label>Deck descriptions (optional, one per line as "Deck::Path = description")</label>
+          <textarea data-path="routing.deckDescriptions" data-type="descriptions" placeholder="Evergreen::Psychology = Psychology concepts, theories, and researchers"></textarea>
+          <div class="hint">Improves routing for decks whose names are ambiguous.</div>
+        </div>
+        <div class="row">
+          <button data-action="test-embeddings">Test embeddings</button>
+          <button data-action="detect-embeddings">Load models</button>
+          <button class="primary" data-action="rebuild-index">Rebuild deck index</button>
+        </div>
+        <div class="hint" id="result-embeddings"></div>
+      </section>
+
+      <section>
+        <h2>Card generation</h2>
+        <div class="field full">
+          <label>Card flow</label>
+          <select data-path="flow.mode">
+            <option value="immediate">Immediate — one notification per highlight</option>
+            <option value="collect">Collect — one ongoing review board, edit at the end</option>
+          </select>
+          <div class="hint">Collect gathers every highlight into a single bottom-right panel. Keep reading in one flow, then edit and add all cards at the end.</div>
+        </div>
+        <div class="grid">
+          <div class="field"><label>Max cards per highlight</label><input type="number" min="1" max="5" data-path="cards.maxCards" data-type="number" /></div>
+          <div class="field"><label>Default autogen card count</label><input type="number" min="1" max="30" data-path="autogen.defaultCount" data-type="number" /><div class="hint">Used as the default in the autogen prompt (Alt+Shift+G by default).</div></div>
+          <div class="field">
+            <label>Bloom level</label>
+            <select data-path="cards.bloomLevel">
+              <option value="remember">Remember</option>
+              <option value="understand">Understand</option>
+              <option value="apply">Apply</option>
+              <option value="analyze">Analyze</option>
+              <option value="evaluate">Evaluate</option>
+              <option value="create">Create</option>
+              <option value="mix">Mix</option>
+            </select>
+          </div>
+          <div class="field"><label>Temperature</label><input type="number" min="0" max="1.5" step="0.05" data-path="cards.temperature" data-type="number" /></div>
+          <div class="field"><label>Max words per cloze</label><input type="number" min="1" max="2" step="1" data-path="cards.maxClozeWords" data-type="number" /><div class="hint">1-2 words (2 maximum).</div></div>
+          <div class="field">
+            <label>Reasoning effort (OpenCode Go)</label>
+            <select data-path="cards.reasoningEffort">
+              <option value="none">None (fastest)</option>
+              <option value="minimal">Minimal</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="default">Model default</option>
+            </select>
+            <div class="hint">Reasoning models can spend the token budget thinking. "Low" balances quality and reliability.</div>
+          </div>
+          <div class="field"><label>Context paragraphs before</label><input type="number" min="0" max="5" data-path="context.paragraphsBefore" data-type="number" /></div>
+          <div class="field"><label>Context paragraphs after</label><input type="number" min="0" max="5" data-path="context.paragraphsAfter" data-type="number" /></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Image cards</h2>
+        <div class="field full check">
+          <input type="checkbox" id="imagesEnabled" data-path="images.enabled" data-type="boolean" />
+          <label for="imagesEnabled" style="font-size:13px;color:#e7e7ea">Enable image cards (click or right-click an image → basic card)</label>
+        </div>
+        <div class="grid">
+          <div class="field"><label>Image note model (both directions)</label><input data-path="images.noteModel" /></div>
+          <div class="field"><label>One-way model</label><input data-path="images.oneWayModel" /></div>
+          <div class="field"><label>Front field</label><input data-path="images.frontField" /></div>
+          <div class="field"><label>Back field</label><input data-path="images.backField" /></div>
+          <div class="field">
+            <label>Default image side</label>
+            <select data-path="images.defaultImageSide"><option value="front">Front</option><option value="back">Back</option></select>
+          </div>
+          <div class="field"><label>Max image size (MB)</label><input type="number" min="1" max="50" step="1" data-path="images.maxImageMB" data-type="number" /></div>
+        </div>
+        <div class="field full check"><input type="checkbox" id="imagesBoth" data-path="images.defaultBothDirections" data-type="boolean" /><label for="imagesBoth" style="font-size:13px;color:#e7e7ea">Create both directions by default</label></div>
+        <div class="field full check"><input type="checkbox" id="imagesDownscale" data-path="images.downscale" data-type="boolean" /><label for="imagesDownscale" style="font-size:13px;color:#e7e7ea">Downscale large images (best-effort, needs OffscreenCanvas)</label></div>
+        <div class="field full check"><input type="checkbox" id="imagesVision" data-path="images.visionIdentifier" data-type="boolean" /><label for="imagesVision" style="font-size:13px;color:#e7e7ea">Use a vision model to name images (falls back to page context)</label></div>
+        <div class="hint">Image cards reuse your Basic-style models. The source link is appended to the text side.</div>
+      </section>
+
+      <section>
+        <h2>Page markers</h2>
+        <div class="field full check"><input type="checkbox" id="showMarkers" data-path="annotations.showMarkers" data-type="boolean" /><label for="showMarkers" style="font-size:13px;color:#e7e7ea">Show a marker on pages where you made cards (click it to view/edit the notes)</label></div>
+        <div class="field full check"><input type="checkbox" id="normalizedUrls" data-path="annotations.normalizedUrls" data-type="boolean" /><label for="normalizedUrls" style="font-size:13px;color:#e7e7ea">Match pages ignoring #hash and tracking parameters</label></div>
+        <div class="hint">Markers link a page back to the Anki cards created from it. Stored only in this browser profile.</div>
+      </section>
+
+      <section>
+        <h2>Hypothes.is</h2>
+        <div class="field">
+          <label>Integration mode</label>
+          <select data-path="hypothesis.mode">
+            <option value="off">Off</option>
+            <option value="both">Automatic (API if token set, else page watch)</option>
+            <option value="api">Hypothes.is API (token)</option>
+            <option value="dom">Page watch (no token)</option>
+          </select>
+        </div>
+        <div class="field"><label>API token</label><input type="password" autocomplete="new-password" data-path="hypothesis.apiToken" placeholder="paste your Hypothes.is developer token" /></div>
+        <div class="row">
+          <button data-action="test-hypothesis">Test connection</button>
+          <button data-action="clear-hypothesis">Clear processed history</button>
+        </div>
+        <div class="hint" id="result-hypothesis">Token from hypothes.is/account/developer. Needed to read your own (private) highlights via the API.</div>
+        <div class="grid">
+          <div class="field"><label>Poll interval (seconds)</label><input type="number" min="5" max="300" data-path="hypothesis.pollSeconds" data-type="number" /></div>
+        </div>
+        <div class="field full check"><input type="checkbox" id="hypNote" data-path="hypothesis.includeNoteText" data-type="boolean" /><label for="hypNote" style="font-size:13px;color:#e7e7ea">Include annotation note text in Back Extra</label></div>
+        <div class="hint">New highlights generate cards using your Card flow. Use the popup's “Import Hypothes.is highlights” button to backfill a page.</div>
+      </section>
+
+      <section>
+        <h2>Anki & triggers</h2>
+        <div class="grid">
+          <div class="field"><label>AnkiConnect endpoint</label><input data-path="anki.endpoint" /></div>
+          <div class="field"><label>Note model</label><input data-path="anki.noteModel" /></div>
+          <div class="field"><label>Text field</label><input data-path="anki.textField" /></div>
+          <div class="field"><label>Back Extra field</label><input data-path="anki.backExtraField" /></div>
+        </div>
+        <div class="field full check"><input type="checkbox" id="floatingButton" data-path="triggers.floatingButton" data-type="boolean" /><label for="floatingButton" style="font-size:13px;color:#e7e7ea">Show floating "Anki cloze" button when text is selected</label></div>
+        <div class="field full check"><input type="checkbox" id="allowContext" data-path="triggers.allowContextInBackExtra" data-type="boolean" /><label for="allowContext" style="font-size:13px;color:#e7e7ea">Include LLM context above the mandatory Source line in Back Extra</label></div>
+        <div class="field full check"><input type="checkbox" id="warnUnload" data-path="triggers.warnOnUnload" data-type="boolean" /><label for="warnUnload" style="font-size:13px;color:#e7e7ea">Warn before closing a tab/window that has unsaved cards</label></div>
+        <div class="grid">
+          <div class="field"><label>Queue flush interval (seconds)</label><input type="number" min="30" max="3600" data-path="queuePollSeconds" data-type="number" /></div>
+        </div>
+        <div class="row">
+          <button data-action="flush-queue">Flush queue now</button>
+          <button data-action="clear-queue">Clear queue</button>
+          <button data-action="open-anki">Check AnkiConnect</button>
+        </div>
+        <div class="hint" id="result-anki"></div>
+      </section>
+
+      <section>
+        <h2>Shortcuts</h2>
+        <div class="field">
+          <label>Create card from highlight</label>
+          <div class="row">
+            <input id="shortcut-capture" data-path="shortcuts.capture" readonly placeholder="Alt+Shift+A" />
+            <button data-action="record-shortcut" data-target="capture">Record</button>
+            <button data-action="reset-shortcut" data-target="capture">Reset</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Toggle edit / open review board</label>
+          <div class="row">
+            <input id="shortcut-edit" data-path="shortcuts.edit" readonly placeholder="Alt+Shift+E" />
+            <button data-action="record-shortcut" data-target="edit">Record</button>
+            <button data-action="reset-shortcut" data-target="edit">Reset</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Toggle page markers</label>
+          <div class="row">
+            <input id="shortcut-markers" data-path="shortcuts.toggleMarkers" readonly placeholder="Alt+Shift+M" />
+            <button data-action="record-shortcut" data-target="markers">Record</button>
+            <button data-action="reset-shortcut" data-target="markers">Reset</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Autogenerate cards from page</label>
+          <div class="row">
+            <input id="shortcut-autogen" data-path="shortcuts.autogen" readonly placeholder="Alt+Shift+G" />
+            <button data-action="record-shortcut" data-target="autogen">Record</button>
+            <button data-action="reset-shortcut" data-target="autogen">Reset</button>
+          </div>
+        </div>
+        <div class="hint" id="result-shortcuts">Click Record, then press the combination. Firefox rejects shortcuts already used by the browser or another add-on; manage everything under about:addons → gear → Manage Extension Shortcuts.</div>
+      </section>
+
+      <datalist id="deck-list"></datalist>
+      <div id="status"></div>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
